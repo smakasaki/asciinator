@@ -20,3 +20,17 @@ go.work.sum
 
 # env file
 .env
+
+# image files
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+
+# ide files
+.idea
+.vscode
+
+# build files
+asciinator

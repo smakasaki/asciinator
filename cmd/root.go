@@ -1,6 +1,5 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -8,25 +7,48 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/smakasaki/asciinator/internal/image_processor"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
+var (
+	cfgFile   string
+	customMap string
+	colored   bool
 
-// rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
-	Use:   "asciinator",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	// rootCmd represents the base command when called without any subcommands
+	rootCmd = &cobra.Command{
+		Use:   "asciinator [image path]", // TODO add url support
+		Short: "Transform an image into ASCII art",
+		Long:  "This tool will transform an image into ASCII art and will print it to the terminal.\n For now, only local files are supported.",
+		Run: func(cmd *cobra.Command, args []string) {
+			if !checkArgsAndFlags(args) {
+				os.Exit(1)
+			}
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+			flags := image_processor.Flags{
+				CustomMap: customMap,
+				Colored:   colored,
+			}
+
+			for _, imagePath := range args {
+				if err := printAscii(imagePath, flags); err != nil {
+					return
+				}
+			}
+		},
+	}
+)
+
+func printAscii(imagePath string, flags image_processor.Flags) error {
+	if asciiArt, err := image_processor.Convert(imagePath, flags); err == nil {
+		fmt.Println(asciiArt)
+	} else {
+		fmt.Println(err)
+		return err
+	}
+	return nil
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -40,16 +62,9 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.asciinator.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.PersistentFlags().StringVarP(&customMap, "custom-map", "m", "", "Custom character map")
+	rootCmd.PersistentFlags().BoolVarP(&colored, "colored", "c", false, "Colored output")
 }
 
 // initConfig reads in config file and ENV variables if set.
