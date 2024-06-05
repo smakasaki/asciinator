@@ -7,49 +7,21 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/smakasaki/asciinator/internal/image_processor"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
-	cfgFile   string
-	customMap string
-	colored   bool
+	cfgFile string
 
 	// rootCmd represents the base command when called without any subcommands
 	rootCmd = &cobra.Command{
 		Use:   "asciinator [image path]", // TODO add url support
 		Short: "Transform an image into ASCII art",
 		Long:  "This tool will transform an image into ASCII art and will print it to the terminal.\n For now, only local files are supported.",
-		Run: func(cmd *cobra.Command, args []string) {
-			if !checkArgsAndFlags(args) {
-				os.Exit(1)
-			}
-
-			flags := image_processor.Flags{
-				CustomMap: customMap,
-				Colored:   colored,
-			}
-
-			for _, imagePath := range args {
-				if err := printAscii(imagePath, flags); err != nil {
-					return
-				}
-			}
-		},
+		Run:   mainCommand,
 	}
 )
-
-func printAscii(imagePath string, flags image_processor.Flags) error {
-	if asciiArt, err := image_processor.Convert(imagePath, flags); err == nil {
-		fmt.Println(asciiArt)
-	} else {
-		fmt.Println(err)
-		return err
-	}
-	return nil
-}
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
