@@ -14,6 +14,7 @@ import (
 var (
 	customMap string
 	colored   bool
+	braille   bool
 )
 
 func mainCommand(cmd *cobra.Command, args []string) {
@@ -24,6 +25,7 @@ func mainCommand(cmd *cobra.Command, args []string) {
 	flags := art_processor.Flags{
 		CustomMap: customMap,
 		Colored:   colored,
+		Braille:   braille,
 	}
 
 	for _, imagePath := range args {

@@ -37,6 +37,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.asciinator.yaml)")
 	rootCmd.PersistentFlags().StringVarP(&customMap, "custom-map", "m", "", "Custom character map")
 	rootCmd.PersistentFlags().BoolVarP(&colored, "colored", "c", false, "Colored output")
+	rootCmd.PersistentFlags().BoolVarP(&braille, "braille", "b", false, "Use Braille characters")
 }
 
 // initConfig reads in config file and ENV variables if set.

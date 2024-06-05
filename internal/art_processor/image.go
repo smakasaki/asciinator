@@ -4,6 +4,7 @@ import (
 	"image"
 	_ "image/jpeg"
 	_ "image/png"
+	"net/http"
 	"os"
 
 	"github.com/nfnt/resize"
@@ -12,6 +13,7 @@ import (
 // ImageProcessor interface for image processing
 type ImageProcessor interface {
 	Load(filePath string) (image.Image, error)
+	LoadFromURL(url string) (image.Image, error)
 	Resize(img image.Image, maxWidth, maxHeight uint) image.Image
 }
 
@@ -27,6 +29,18 @@ func (p Processor) Load(filePath string) (image.Image, error) {
 	defer localImage.Close()
 
 	img, _, err := image.Decode(localImage)
+	return img, err
+}
+
+// LoadFromURL loads an image from a URL
+func (p Processor) LoadFromURL(url string) (image.Image, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	img, _, err := image.Decode(resp.Body)
 	return img, err
 }
 

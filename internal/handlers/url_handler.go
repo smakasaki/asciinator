@@ -6,16 +6,16 @@ import (
 	"github.com/smakasaki/asciinator/internal/art_processor"
 )
 
-type LocalHandler struct {
+type UrlHandler struct {
 	BaseHandler
 }
 
-func (l *LocalHandler) Handle(request string, flags art_processor.Flags) (string, error) {
+func (u *UrlHandler) Handle(request string, flags art_processor.Flags) (string, error) {
 	processor := art_processor.Processor{}
 	converter := art_processor.Converter{}
-	img, err := processor.Load(request)
+	img, err := processor.LoadFromURL(request)
 	if err != nil {
-		return l.BaseHandler.Handle(request, flags)
+		return u.BaseHandler.Handle(request, flags)
 	}
 
 	termWidth, termHeight := GetTerminalSize()
